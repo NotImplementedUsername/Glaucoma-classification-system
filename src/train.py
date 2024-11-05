@@ -42,6 +42,12 @@ def training_loop(num_of_epochs: int, batch_size: int):
 
             optimizer.step()
 
-        # TODO add validation
+        with torch.no_grad:
+            for i, data in enumerate(validate_dataloader):
+                images, labels = data
+
+                outputs = model(images)
+
+                # TODO compute metrics
     
     return model
