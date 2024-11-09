@@ -1,11 +1,12 @@
 import torch
 from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
+import torch.types
 from torch.utils.data import DataLoader
 from model import GlaucomaClassifier
 from data import Eye_fundus_dataset
 from pathlib import Path
-
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 use_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if use_cuda else 'cpu')
@@ -16,6 +17,7 @@ batch_size = 20
 def training_loop(num_of_epochs: int, batch_size: int):
     
     model = GlaucomaClassifier()
+    classification_threshold = 0.5
 
     location_negative = Path('./data/negative')
     location_positive = Path('./data/positive')
@@ -30,6 +32,7 @@ def training_loop(num_of_epochs: int, batch_size: int):
 
     for epoch in range(num_of_epochs):
         
+        model.train()   # Model training
         for i, data in enumerate(train_dataloader):
             images, labels = data
 
@@ -42,12 +45,22 @@ def training_loop(num_of_epochs: int, batch_size: int):
 
             optimizer.step()
 
-        with torch.no_grad:
+        model.eval()    # Model validation
+        with torch.no_grad():
+            model.eval()
+            labels = []
+            outputs = []
             for i, data in enumerate(validate_dataloader):
-                images, labels = data
+                images, batch_labels = data
+                
+                labels += batch_labels.tolist()
+                batch_outputs = model(images)[:, 1]
+                batch_outputs = batch_outputs > classification_threshold
+                outputs += batch_outputs.type(torch.int32).tolist()
+                
+            precision = precision_score(labels, outputs)
+            recall = recall_score(labels, outputs)
+            f1 = f1_score(labels, outputs)
+            print(f'Epoch: {epoch}, Precisson: {precision}, Recall: {recall}, f1: {f1}')
 
-                outputs = model(images)
-
-                # TODO compute metrics
-    
     return model
