@@ -17,7 +17,7 @@ class Block1(nn.Module):
 
 class GlaucomaClassifier(nn.Module):
     '''
-        Input 156 x 238 x 1
+        Input 256 x 256 x 1
         Deep neural network was created based on the network presented in paper: Sułot, Dominika, et al. "Glaucoma classification based on scanning laser ophthalmoscopic images using a deep learning ensemble method." Plos one 16.6 (2021): e0252339
     '''
     def __init__(self) -> None:
@@ -42,13 +42,13 @@ class GlaucomaClassifier(nn.Module):
         self.max_pool1 = nn.MaxPool2d(2)
 
         self.flatten = nn.Flatten()
-        self.dense1 = nn.Linear(960, 128) # in:960  out:128
+        self.dense1 = nn.Linear(2304, 128) # in:256  out:128
         
         self.relu = nn.ReLU()
         self.dropout = nn.Dropout(0.6) 
         self.dense2 = nn.Linear(128, 2) # in:128 out:2
         
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
     
     def forward(self, x: Tensor) -> Tensor:
         result = self.avg_pool(x)
