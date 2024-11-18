@@ -17,7 +17,11 @@ class Eye_fundus_dataset(Dataset):
             self.images.append(img)
             self.labels.append(0)
 
-        # TODO load positive samples
+        for image in os.listdir(self.location_positive):
+            f = Path(os.path.join(self.location_positive, image))
+            img = read_image.read_image(f)
+            self.images.append(img)
+            self.labels.append(1)
 
     def __len__(self) -> int:
         return len(self.images)
