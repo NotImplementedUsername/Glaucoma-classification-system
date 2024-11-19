@@ -1,34 +1,22 @@
 import torch
-from torch.nn import CrossEntropyLoss
-from torch.optim import Adam
 import torch.types
-from torch.utils.data import DataLoader
-from model import GlaucomaClassifier
-from data import Eye_fundus_dataset
-from pathlib import Path
+import torch.nn as nn
+from torch.optim import Optimizer
+from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import precision_score, recall_score, f1_score
 
-use_cuda = torch.cuda.is_available()
-device = torch.device('cuda' if use_cuda else 'cpu')
 
-num_of_epochs = 10
-batch_size = 20
-
-def training_loop(num_of_epochs: int, batch_size: int):
-    
-    model = GlaucomaClassifier()
-    classification_threshold = 0.5
-
-    location_negative = Path('./data/negative')
-    location_positive = Path('./data/positive')
-    train_dataset = Eye_fundus_dataset()
-    test_dataset = Eye_fundus_dataset()
+def training_loop(model: nn.Module,
+                  train_dataset: Dataset,
+                  test_dataset: Dataset,
+                  classification_threshold: float,
+                  optimizer: Optimizer,
+                  loss_f: nn.Module,
+                  num_of_epochs: int,
+                  batch_size: int):
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     validate_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
-    loss_f = CrossEntropyLoss()
-    optimizer = Adam(model.parameters(), lr=0.001)
 
     for epoch in range(num_of_epochs):
         
@@ -62,5 +50,3 @@ def training_loop(num_of_epochs: int, batch_size: int):
             recall = recall_score(labels, outputs)
             f1 = f1_score(labels, outputs)
             print(f'Epoch: {epoch}, Precisson: {precision}, Recall: {recall}, f1: {f1}')
-
-    return model
