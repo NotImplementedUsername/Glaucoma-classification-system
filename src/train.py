@@ -8,7 +8,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 
 def training_loop(model: nn.Module,
                   train_dataset: Dataset,
-                  test_dataset: Dataset,
+                  validate_dataset: Dataset,
                   classification_threshold: float,
                   optimizer: Optimizer,
                   loss_f: nn.Module,
@@ -16,7 +16,7 @@ def training_loop(model: nn.Module,
                   batch_size: int):
 
     train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    validate_dataloader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+    validate_dataloader = DataLoader(validate_dataset, batch_size=batch_size, shuffle=True)
 
     for epoch in range(num_of_epochs):
         
