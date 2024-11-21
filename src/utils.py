@@ -5,6 +5,8 @@ from pathlib import Path
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
 
+from train import training_loop
+
 
 def get_model():
 
@@ -22,9 +24,16 @@ def get_model():
     num_of_epochs = 100
     batch_size = 20
 
+    classification_threshold = 0.5
+
     # TODO initialize model
 
-    # TODO train model
+    training_loop(model,
+                  train_dataset, val_dataset,
+                  classification_threshold,
+                  optimizer, loss_function,
+                  num_of_epochs, batch_size)
+
 
 
 def initialize_model():
