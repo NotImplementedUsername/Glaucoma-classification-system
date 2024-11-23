@@ -3,17 +3,18 @@ from model import GlaucomaClassifier
 from data import Eye_fundus_dataset
 from pathlib import Path
 from torch.optim import Adam
-from torch.nn import CrossEntropyLoss
-
+from torch.nn import CrossEntropyLoss, init
 from train import training_loop
 
 
-def get_model():
+def get_model() -> GlaucomaClassifier:
 
     use_cuda = torch.cuda.is_available()
     device = torch.device('cuda' if use_cuda else 'cpu')
 
     model = GlaucomaClassifier()
+
+    model.to(device)
     
     train_dataset = Eye_fundus_dataset(Path('./data/train/negative'), Path('./data/train/positive'))
     val_dataset = Eye_fundus_dataset(Path('./data/validate/negative'), Path('./data/validate/positive'))
@@ -26,7 +27,7 @@ def get_model():
 
     classification_threshold = 0.5
 
-    # TODO initialize model
+    model.apply(init.kaiming_normal_)
 
     training_loop(model,
                   train_dataset, val_dataset,
@@ -34,11 +35,7 @@ def get_model():
                   optimizer, loss_function,
                   num_of_epochs, batch_size)
 
-
-
-def initialize_model():
-    pass
-
+    return model
 
 def save_model():
     pass
