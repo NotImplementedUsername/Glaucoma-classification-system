@@ -27,8 +27,6 @@ def get_model() -> GlaucomaClassifier:
 
     classification_threshold = 0.5
 
-    model.apply(init.kaiming_normal_)
-
     training_loop(model,
                   train_dataset, val_dataset,
                   classification_threshold,
@@ -37,8 +35,8 @@ def get_model() -> GlaucomaClassifier:
 
     return model
 
-def save_model():
-    pass
+def save_model(model, file_name):
+    torch.save(model, file_name)
 
-def load_model():
-    pass
+def load_model(file_path):
+    return torch.load(file_path, weights_only=False)
