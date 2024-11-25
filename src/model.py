@@ -75,4 +75,7 @@ class GlaucomaClassifier(nn.Module):
         result = self.dropout(result)
         result = self.dense2(result)
         
-        return self.softmax(result)
+        if self.training:
+            return result
+        else:
+            return self.softmax(result)
