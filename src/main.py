@@ -1,5 +1,5 @@
 import torch
-from data import Eye_fundus_dataset
+from data import EyeFundusDataset
 from utils import get_model, save_model
 from pathlib import Path
 from torch.utils.data import DataLoader
@@ -8,7 +8,7 @@ from sklearn.metrics import precision_score, recall_score, f1_score
 if __name__ == "__main__":
     model = get_model()
 
-    test_dataset = Eye_fundus_dataset(Path('./data/test/negative'), Path('./data/test/positive'))
+    test_dataset = EyeFundusDataset(Path('./data/test/negative'), Path('./data/test/positive'))
     test_dataloader = DataLoader(test_dataset, batch_size=10, shuffle=True)
     classification_threshold = 0.5
 
@@ -30,3 +30,4 @@ if __name__ == "__main__":
         print(f'Model testing, Precisson: {precision}, Recall: {recall}, f1: {f1}')
 
     save_model(model, './model.pt')
+    
